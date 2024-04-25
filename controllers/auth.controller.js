@@ -28,14 +28,8 @@ export const signup = async (req, res, next) => {
             return;
         }
 
-      
-        const userWithSamePassword = await User.findOne({ email });
-        if (userWithSamePassword && bcryptjs.compareSync(password, userWithSamePassword.password)) {
-            next(errorHandler(400, "An account with this email and password already exists"));
-            return;
-        }
 
-        // Create a new user
+ 
         const hashedPassword = await bcryptjs.hash(password, 12);
         const newUser = new User({ username, email, password: hashedPassword });
         const user = await newUser.save();
@@ -79,7 +73,7 @@ export const signin = async (req, res, next) => {
         }
 
         if (!validUser) {
-            next(errorHandler(401, "Invalid password"));
+            next(errorHandler(401, "Incorrect password"));
             return;
         }
 
@@ -96,7 +90,7 @@ export const signin = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
     try {
-        // Clear the access token cookie by setting its value to an empty string and setting its expiry to a past date
+     
         res.clearCookie('access_token').status(200).json({ message: "Logout successful" });
     } catch (error) {
         next(error);
